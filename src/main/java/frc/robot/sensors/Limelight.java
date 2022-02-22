@@ -69,7 +69,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
         if(name.isBlank()){
             table = NetworkTableInstance.getDefault().getTable("limelight");
         } else {
-            table = NetworkTableInstance.getDefault().getTable("limelight-"+name);
+            table = NetworkTableInstance.getDefault().getTable("limelight-"+ name);
 
         }
        tv     = table.getEntry("tv");

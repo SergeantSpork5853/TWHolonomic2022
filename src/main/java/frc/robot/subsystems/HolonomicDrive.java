@@ -10,12 +10,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS; 
 //WPILIB dependencies
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.sensors.Limelight;
+import frc.robot.sensors.RPLidar; 
 
 public class HolonomicDrive extends SubsystemBase { 
   /**This value is "dummy" for now. It should be meters per second but we are using percent voltage control so it instead
@@ -38,6 +41,10 @@ public class HolonomicDrive extends SubsystemBase {
   //This kinematics constructor will allow use to command the three separate motors as a unified drivebase
   private final MecanumDriveKinematics kinematics = 
       new MecanumDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);  
+
+  private RPLidar myLidar = new RPLidar(); 
+
+  private Limelight myCamera = new Limelight(); 
   
   /** Creates a new HolonomicDrive. */ 
   public HolonomicDrive() { 
@@ -46,8 +53,10 @@ public class HolonomicDrive extends SubsystemBase {
     /** One half of the drivebase must be inverted to drive in non-field oriented mode. I am not sure if it is 
     also necessary for field oriented mode */
     frontRightMotor.setInverted(true); 
-    backRightMotor.setInverted(true);
-  } 
+    backRightMotor.setInverted(true); 
+
+    myCamera.setPipeline((byte) 0);
+  }  
 
   public void setSpeeds(MecanumDriveWheelSpeeds speeds){ 
     //Once again, the "meters per second" component is treated like a percent voltage since it is limited to -1 to 1
@@ -86,6 +95,6 @@ public class HolonomicDrive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run 
+    myLidar.publishData();
     }
 }
