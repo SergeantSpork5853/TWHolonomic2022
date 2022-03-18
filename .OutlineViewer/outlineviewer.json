@@ -1,1 +1,14 @@
-{}
+{
+  "LiveWindow": {
+    "HolonomicDrive": {
+      "open": true
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client",
+    "serverTeam": "10.14.5.2"
+  },
+  "rp_lidar": {
+    "open": true
+  }
+}
