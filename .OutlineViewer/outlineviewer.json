@@ -8,6 +8,9 @@
     "mode": "Client",
     "serverTeam": "10.14.5.2"
   },
+  "SmartDashboard": {
+    "open": true
+  },
   "rp_lidar": {
     "open": true
   }

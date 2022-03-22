@@ -74,7 +74,7 @@ public class RobotContainer {
 
     new JoystickButton(driver, XboxController.Button.kA.value)
         .whenPressed(new SequentialCommandGroup(new RunPath(0, 0, 30, driveBase), new WaitCommand(5),
-            new RunPath(0, 0, -30, driveBase)));
+            new RunPath(0.25, 0, 0, driveBase)));
   }
 
   /**
@@ -83,8 +83,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return new RunPath(0, 0, 0, driveBase);
-    return null;
+    return new RunPath(0, 0, Math.toRadians(0), driveBase);
+    // return null;
   }
 
 }

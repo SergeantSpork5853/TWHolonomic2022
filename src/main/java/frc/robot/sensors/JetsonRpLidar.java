@@ -31,7 +31,7 @@ public class JetsonRpLidar {
     public void publishData() {
         // double rotation = theta.getNumber(0).doubleValue();
 
-        // System.out.println("Theta " + Math.toDegrees(rotation));
+        // System.out.println("Theta " + Math.toDegrees(getTheta()));
 
         // System.out.println("y " + getY());
 

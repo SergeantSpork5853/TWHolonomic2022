@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.sensors.JetsonRpLidar;
@@ -24,8 +25,8 @@ public class RunPath extends CommandBase {
   double tInc;
 
   public PIDController xController;
-  public PIDController yController;
-  public PIDController thetaController;
+  public ProfiledPIDController yController;
+  public ProfiledPIDController thetaController;
 
   public HolonomicDrive driveBase = new HolonomicDrive();
   public JetsonRpLidar jetsonLidar = new JetsonRpLidar();
@@ -39,14 +40,14 @@ public class RunPath extends CommandBase {
 
     this.addRequirements(driveBase);
 
-    xController = new PIDController(0, 0, 0);
-    yController = new PIDController(0, 0, 0);
-    thetaController = new PIDController(2, 0, 0);
+    xController = new PIDController(1, 0.03, 0);
+    yController = new ProfiledPIDController(1.3, 0.03, 0, new TrapezoidProfile.Constraints(1, 1));
+    thetaController = new ProfiledPIDController(1.3, 0.032, 0, new TrapezoidProfile.Constraints(2 * Math.PI, Math.PI));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    xController.setTolerance(0.05);
-    yController.setTolerance(0.05);
-    thetaController.setTolerance(0.3);
+    // xController.setTolerance(0.05);
+    // yController.setTolerance(0.05);
+    // thetaController.setTolerance(0.3);
   }
 
   // Called when the command is initially scheduled.
@@ -54,7 +55,7 @@ public class RunPath extends CommandBase {
   public void initialize() {
     t = 0;
 
-    tInc = 0.001;
+    tInc = 0.1;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -64,11 +65,13 @@ public class RunPath extends CommandBase {
     double currentYValue = jetsonLidar.getY();
     double currentThetaValue = jetsonLidar.getTheta();
 
-    driveBase.drive(xController.calculate(currentXValue, desiredX),
-        yController.calculate(currentYValue, desiredY),
-        -thetaController.calculate(currentThetaValue, ramp()));
-    ramp();
-    SmartDashboard.putNumber("PID ERROR", Math.toDegrees(thetaController.getPositionError()));
+    driveBase.drive(-yController.calculate(currentYValue, desiredY),
+        -xController.calculate(currentXValue, desiredX),
+        thetaController.calculate(currentThetaValue, desiredTheta));
+    SmartDashboard.putNumber("THETA PID ERROR", Math.toDegrees(thetaController.getPositionError()));
+    SmartDashboard.putNumber("X PID ERROR", xController.getPositionError());
+    SmartDashboard.putNumber("Y PID ERROR", yController.getPositionError());
+    System.out.println("Current " + Math.toDegrees(ramp()));
   }
 
   // Called once the command ends or is interrupted.
@@ -95,6 +98,6 @@ public class RunPath extends CommandBase {
 
     SmartDashboard.putNumber("Current", t);
 
-    return t;
+    return Math.toRadians(t);
   }
 }
